@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propuesta de Conectividad para Minería - Proyecto PITS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .kpi-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 5px solid #0ea5e9; /* sky-500 */
+        }
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+        .network-map {
+            position: relative;
+            width: 100%;
+            height: 400px; /* Adjusted height for better spacing */
+            background: #ffffff;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .node {
+            position: absolute;
+            background-color: #0284c7; /* sky-600 */
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.3);
+            z-index: 10;
+        }
+        .bsu {
+            width: 80px;
+            height: 80px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.1rem;
+            background-color: #be123c; /* rose-700 */
+            box-shadow: 0 0 0 5px rgba(190, 18, 60, 0.3);
+
+        }
+        .su {
+            width: 60px;
+            height: 60px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .link-line {
+            position: absolute;
+            background-color: #cbd5e1; /* slate-300 */
+            height: 2px;
+            transform-origin: 0 50%;
+            z-index: 5;
+            transition: background-color 0.3s;
+        }
+        .tooltip {
+            position: absolute;
+            display: none;
+            background-color: rgba(15, 23, 42, 0.85); /* slate-900 */
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            z-index: 20;
+            pointer-events: none;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .su:hover + .link-line, .su:hover ~ .tooltip {
+            display: block;
+        }
+        .su:hover + .link-line {
+            background-color: #0ea5e9;
+        }
+        .tab-button {
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+        }
+        .tab-button.active {
+            color: #0c4a6e; /* sky-900 */
+            border-bottom-color: #0ea5e9; /* sky-500 */
+        }
+    </style>
+</head>
+<body class="bg-slate-100">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800">Propuesta de Conectividad para Operaciones Mineras</h1>
+            <p class="text-lg text-slate-600 mt-2">Proyecto PITS - Zona VI | Tecnología Proxim Wireless</p>
+        </header>
+
+        <!-- KPIs -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div class="kpi-card">
+                <h3 class="text-slate-500 font-medium">Capacidad Máxima</h3>
+                <p class="text-3xl font-bold text-slate-800 mt-2">200 Mbps</p>
+                <p class="text-sm text-slate-500">Ideal para Video 4K e Internet de alta velocidad</p>
+            </div>
+            <div class="kpi-card">
+                <h3 class="text-slate-500 font-medium">Disponibilidad del Sistema</h3>
+                <p class="text-3xl font-bold text-slate-800 mt-2">99.999%</p>
+                <p class="text-sm text-slate-500">Operación continua garantizada</p>
+            </div>
+            <div class="kpi-card">
+                <h3 class="text-slate-500 font-medium">Latencia de Red</h3>
+                <p class="text-3xl font-bold text-slate-800 mt-2">&approx;2 ms</p>
+                <p class="text-sm text-slate-500">Respuesta en tiempo real para video y control</p>
+            </div>
+            <div class="kpi-card">
+                <h3 class="text-slate-500 font-medium">Puntos Remotos</h3>
+                <p class="text-3xl font-bold text-slate-800 mt-2">9 Puntos</p>
+                <p class="text-sm text-slate-500">Cobertura total en la Zona VI</p>
+            </div>
+        </section>
+        
+        <!-- Interactive Map and Details -->
+        <section class="bg-white p-6 rounded-lg shadow-lg mb-12">
+            <h2 class="text-2xl font-bold text-slate-800 mb-4">Topología de Red Interactiva</h2>
+            <p class="text-slate-600 mb-6">Pase el cursor sobre cada punto remoto (SU) para ver los detalles de su conexión. La Estación Base (BSU) es el núcleo de la red.</p>
+            <div class="network-map" id="network-map-container">
+                <!-- Nodes and lines will be injected by JavaScript -->
+            </div>
+        </section>
+
+
+        <!-- Why Proxim for Mining? -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-slate-800 text-center mb-8">¿Por Qué Proxim es la Solución Ideal para Minería?</h2>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="flex border-b border-slate-200 mb-4">
+                    <button class="tab-button active text-lg font-semibold px-4 py-2" onclick="openTab(event, 'robustez')">Robustez Extrema</button>
+                    <button class="tab-button text-lg font-semibold px-4 py-2" onclick="openTab(event, 'seguridad')">Seguridad Crítica</button>
+                    <button class="tab-button text-lg font-semibold px-4 py-2" onclick="openTab(event, 'operacion')">Operación Ininterrumpida</button>
+                    <button class="tab-button text-lg font-semibold px-4 py-2" onclick="openTab(event, 'roi')">Retorno de Inversión</button>
+                </div>
+
+                <div id="robustez" class="tab-content">
+                    <h3 class="text-xl font-semibold text-sky-800 mb-2">Diseñado para Entornos Hostiles</h3>
+                    <p class="text-slate-700">Las operaciones mineras exponen los equipos a polvo, vibraciones y temperaturas extremas. Los equipos Proxim están construidos para soportar estas condiciones. Nuestro análisis muestra un **Margen de Desvanecimiento (Fade Margin) superior a 25 dB** en cada enlace. Esto actúa como un poderoso "colchón de seguridad" que asegura una conexión estable incluso bajo lluvia intensa o neblina, condiciones comunes en emplazamientos mineros.</p>
+                </div>
+                <div id="seguridad" class="tab-content hidden">
+                    <h3 class="text-xl font-semibold text-sky-800 mb-2">Protección de Datos Sensibles</h3>
+                    <p class="text-slate-700">La transmisión de video de vigilancia y datos operativos es crítica. Nuestra solución utiliza **encriptación AES (Advanced Encryption Standard)**, el mismo estándar utilizado por gobiernos y bancos para proteger información clasificada. Esto garantiza que sus datos están blindados contra accesos no autorizados, protegiendo la integridad de su operación.</p>
+                </div>
+                <div id="operacion" class="tab-content hidden">
+                    <h3 class="text-xl font-semibold text-sky-800 mb-2">Prevención de Costosas Paralizaciones</h3>
+                    <p class="text-slate-700">En minería, cada minuto de inactividad se traduce en pérdidas significativas. Una disponibilidad del **99.999%** no es un lujo, es una necesidad. Significa que la red está diseñada para funcionar sin fallos, asegurando que el monitoreo de video, el control de maquinaria y la comunicación entre equipos sean constantes, maximizando la productividad y la seguridad del personal.</p>
+                </div>
+                <div id="roi" class="tab-content hidden">
+                    <h3 class="text-xl font-semibold text-sky-800 mb-2">Control Total y Costo Predecible</h3>
+                    <p class="text-slate-700">A diferencia de los servicios satelitales o de fibra con altos costos recurrentes, esta solución es una **inversión de capital (CAPEX) única**. Le otorga a la operación minera el control total sobre su red, sin depender de terceros. El integrador ofrece una solución de alto valor, mientras que el cliente final se beneficia de un costo total de propiedad (TCO) mucho menor a largo plazo.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technology Stack -->
+        <section class="bg-white p-6 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold text-slate-800 mb-4">Equipamiento Utilizado</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <h4 class="font-bold text-lg text-rose-700">Estación Base (BSU)</h4>
+                    <p class="font-mono text-sm text-slate-700">Proxim Tsunami® MP-10250-BSU</p>
+                    <p class="text-slate-600 mt-2">Unidad central de alta capacidad que gestiona y distribuye la conectividad a todos los puntos remotos. Es el corazón de la red.</p>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <h4 class="font-bold text-lg text-sky-700">Unidad de Suscriptor (SU)</h4>
+                    <p class="font-mono text-sm text-slate-700">Proxim Tsunami® MP-10100-SUR</p>
+                    <p class="text-slate-600 mt-2">Equipo compacto y robusto instalado en cada punto (PITS) para recibir y transmitir datos de forma segura hacia la estación base.</p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Footer -->
+        <footer class="text-center mt-12 py-6 border-t border-slate-300">
+            <p class="text-slate-600">Este análisis confirma la viabilidad y superioridad de la solución inalámbrica Proxim.</p>
+            <p class="text-slate-500 text-sm mt-1">Estamos a su disposición para el siguiente paso: la planificación de la implementación.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const linkData = [
+            { id: 'SU 1', dist: '2.39 km', rate: '200 Mbps', avail: '99.999%', margin: '29.3 dB' },
+            { id: 'SU 2', dist: '2.40 km', rate: '200 Mbps', avail: '99.999%', margin: '29.3 dB' },
+            { id: 'SU 3', dist: '2.92 km', rate: '200 Mbps', avail: '99.999%', margin: '28.1 dB' },
+            { id: 'SU 4', dist: '3.48 km', rate: '200 Mbps', avail: '99.999%', margin: '26.9 dB' },
+            { id: 'SU 5', dist: '3.61 km', rate: '200 Mbps', avail: '99.999%', margin: '26.6 dB' },
+            { id: 'SU 6', dist: '3.79 km', rate: '200 Mbps', avail: '99.999%', margin: '26.2 dB' },
+            { id: 'SU 7', dist: '3.97 km', rate: '200 Mbps', avail: '99.999%', margin: '25.8 dB' },
+            { id: 'SU 8', dist: '4.30 km', rate: '200 Mbps', avail: '99.999%', margin: '25.1 dB' },
+            { id: 'SU 9', dist: '4.49 km', rate: '200 Mbps', avail: '99.999%', margin: '24.7 dB' }
+        ];
+
+        const mapContainer = document.getElementById('network-map-container');
+        const mapWidth = mapContainer.clientWidth;
+        const mapHeight = mapContainer.clientHeight;
+        const centerX = mapWidth / 2;
+        const centerY = mapHeight / 2;
+
+        let htmlContent = `<div class="node bsu">BSU</div>`;
+
+        linkData.forEach((link, index) => {
+            const angle = (index / linkData.length) * 2 * Math.PI;
+            const radius = Math.min(mapWidth, mapHeight) * 0.35;
+            const suX = centerX + radius * Math.cos(angle);
+            const suY = centerY + radius * Math.sin(angle);
+            
+            const tooltipX = suX + (suX > centerX ? -160 : 30);
+            const tooltipY = suY + (suY > centerY ? -80 : 20);
+
+            // Calculate line properties
+            const deltaX = suX - centerX;
+            const deltaY = suY - centerY;
+            const distance = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
+            const lineAngle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+
+            htmlContent += `
+                <div class="node su" style="left:${suX - 30}px; top:${suY - 30}px;">${link.id}</div>
+                <div class="link-line" style="left:${centerX}px; top:${centerY}px; width:${distance}px; transform: rotate(${lineAngle}deg);"></div>
+                <div class="tooltip" style="left:${suX - 80}px; top:${suY + 40}px;">
+                    <strong>Enlace:</strong> ${link.id}<br>
+                    <strong>Distancia:</strong> ${link.dist}<br>
+                    <strong>Velocidad:</strong> ${link.rate}<br>
+                    <strong>Confianza:</strong> ${link.avail}<br>
+                    <strong>Margen:</strong> <span class="text-green-400 font-bold">${link.margin}</span>
+                </div>
+            `;
+        });
+        mapContainer.innerHTML = htmlContent;
+
+        function openTab(event, tabName) {
+            // Hide all tab content
+            let tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.add('hidden');
+            }
+
+            // Deactivate all tab buttons
+            let tabButtons = document.getElementsByClassName("tab-button");
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove('active');
+            }
+
+            // Show the current tab and activate its button
+            document.getElementById(tabName).classList.remove('hidden');
+            event.currentTarget.classList.add('active');
+        }
+
+    </script>
+</body>
+</html>
